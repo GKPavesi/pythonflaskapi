@@ -1,10 +1,12 @@
 from app import app
 from flask import jsonify
 from ..views import users
+from ..views import helper
 
 @app.route('/', methods=['GET'])
-def root():
-    return jsonify({"nessage": "Hello World!"})
+@helper.token_required
+def root(current_user):
+    return jsonify({"message": f"Hello {current_user.name}!"})
 
 @app.route('/users', methods=['POST'])
 def post_user():
@@ -25,3 +27,7 @@ def get_user(id):
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
     return users.delete_user(id)
+
+@app.route('/auth', methods=['POST'])
+def authenticate():
+    return helper.auth()
